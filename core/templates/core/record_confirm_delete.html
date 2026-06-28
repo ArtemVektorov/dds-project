@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}Подтверждение удаления{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5>Подтверждение удаления</h5>
+                </div>
+                <div class="card-body">
+                    <p>Вы действительно хотите удалить запись?</p>
+                    <p><strong>Дата:</strong> {{ record.date|date:"d.m.Y" }}<br>
+                       <strong>Тип:</strong> {{ record.type }}<br>
+                       <strong>Сумма:</strong> {{ record.amount }} ₽</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Да, удалить</button>
+                        <a href="{% url 'main' %}" class="btn btn-secondary">Отмена</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

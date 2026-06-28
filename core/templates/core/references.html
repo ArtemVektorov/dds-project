@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}Управление справочниками{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>📚 Управление справочниками</h1>
+    <a href="{% url 'main' %}" class="btn btn-secondary mb-4">← На главную</a>
+
+    <div class="row g-4">
+
+        <!-- Типы -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">Типы операций</div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'add_type' %}" class="mb-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control" placeholder="Например: Пополнение/Списание" required>
+                            <button type="submit" class="btn btn-primary">Добавить</button>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        {% for item in types %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ item.name }}
+                            <div>
+                                <a href="{% url 'edit_type' item.id %}" class="btn btn-sm btn-warning me-2">Изменить</a>
+                                <form method="post" action="{% url 'delete_type' item.id %}"
+                                      onsubmit="return confirm('Удалить тип «{{ item.name }}»?');"
+                                      style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted">Список пуст</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статусы -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">Статусы</div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'add_status' %}" class="mb-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control" placeholder="Например: Бизнес" required>
+                            <button type="submit" class="btn btn-info">Добавить</button>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        {% for item in statuses %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ item.name }}
+                            <div>
+                                <a href="{% url 'edit_status' item.id %}" class="btn btn-sm btn-warning me-2">Изменить</a>
+                                <form method="post" action="{% url 'delete_status' item.id %}"
+                                      onsubmit="return confirm('Удалить статус «{{ item.name }}»?');"
+                                      style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted">Список пуст</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категории -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">Категории</div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'add_category' %}" class="mb-3">
+                        {% csrf_token %}
+                        <select name="type" class="form-select mb-2" required>
+                            <option value="">Выберите тип...</option>
+                            {% for t in types %}
+                            <option value="{{ t.id }}">{{ t.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control" placeholder="Название категории" required>
+                            <button type="submit" class="btn btn-warning">Добавить</button>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        {% for item in categories %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ item.name }}</strong>
+                                <small class="text-muted">({{ item.type.name }})</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_category' item.id %}" class="btn btn-sm btn-warning me-2">Изменить</a>
+                                <form method="post" action="{% url 'delete_category' item.id %}"
+                                      onsubmit="return confirm('Удалить категорию «{{ item.name }}»?');"
+                                      style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted">Список пуст</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Подкатегории -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">Подкатегории</div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'add_subcategory' %}" class="mb-3">
+                        {% csrf_token %}
+                        <select name="category" class="form-select mb-2" required>
+                            <option value="">Выберите категорию...</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }} ({{ cat.type.name }})</option>
+                            {% endfor %}
+                        </select>
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control" placeholder="Название подкатегории" required>
+                            <button type="submit" class="btn btn-secondary">Добавить</button>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        {% for item in subcategories %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                {{ item.name }}
+                                <small class="text-muted">→ {{ item.category.name }}</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_subcategory' item.id %}" class="btn btn-sm btn-warning me-2">Изменить</a>
+                                <form method="post" action="{% url 'delete_subcategory' item.id %}"
+                                      onsubmit="return confirm('Удалить подкатегорию «{{ item.name }}»?');"
+                                      style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                                </form>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted">Список пуст</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

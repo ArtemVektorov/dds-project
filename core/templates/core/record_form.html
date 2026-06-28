@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">Сохранить</button>
+                            <a href="{% url 'main' %}" class="btn btn-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const typeSelect = document.getElementById('id_type');
+    const categorySelect = document.getElementById('id_category');
+    const subcategorySelect = document.getElementById('id_subcategory');
+
+    function loadCategories(typeId) {
+        if (!typeId) return;
+        categorySelect.innerHTML = '<option value="">Загрузка...</option>';
+
+        fetch(`/core/load-categories/?type_id=${typeId}`)
+            .then(r => r.json())
+            .then(data => {
+                categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
+                data.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.name;
+                    if (cat.id == categorySelect.getAttribute('data-initial')) {
+                        option.selected = true;
+                    }
+                    categorySelect.appendChild(option);
+                });
+            });
+    }
+
+    function loadSubcategories(catId) {
+        if (!catId) return;
+        subcategorySelect.innerHTML = '<option value="">Загрузка...</option>';
+
+        fetch(`/core/load-subcategories/?category_id=${catId}`)
+            .then(r => r.json())
+            .then(data => {
+                subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+                data.forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.id;
+                    option.textContent = sub.name;
+                    if (sub.id == subcategorySelect.getAttribute('data-initial')) {
+                        option.selected = true;
+                    }
+                    subcategorySelect.appendChild(option);
+                });
+            });
+    }
+
+    // Основные обработчики
+    typeSelect.addEventListener('change', function() {
+        loadCategories(this.value);
+    });
+
+    categorySelect.addEventListener('change', function() {
+        loadSubcategories(this.value);
+    });
+
+    // При редактировании загружаем текущие значения
+    const initialType = typeSelect.value;
+    const initialCategory = categorySelect.getAttribute('data-initial');
+    const initialSub = subcategorySelect.getAttribute('data-initial');
+
+    if (initialType) {
+        loadCategories(initialType);
+    }
+    if (initialCategory) {
+        setTimeout(() => loadSubcategories(initialCategory), 300);
+    }
+});
+</script>
+{% endblock %}}

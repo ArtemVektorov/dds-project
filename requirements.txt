@@ -1,0 +1,8 @@
+asgiref==3.11.1
+Django==6.0.6
+django-bootstrap5==26.2
+django-filter==25.2
+django-tables2==3.0.0
+python-decouple==3.8
+sqlparse==0.5.5
+whitenoise==6.12.0
