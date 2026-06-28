@@ -27,7 +27,7 @@
 
 1. Клонируйте репозиторий
    
-   git clone https://github.com/ArtemVektorov/cashflow-management.git
+   git clone https://github.com/ArtemVektorov/dds-project.git
 
 2. Установите зависимости
    
